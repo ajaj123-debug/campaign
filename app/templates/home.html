@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+{% load static %}
+<!DOCTYPE html>
+{% load static %}
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Fundraising Campaigns</title>
+    <link rel="icon" href="https://example.com/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    {% include 'navbar.html' %}
+
+    <div class="container mt-4">
+        <h1>Fundraising Campaigns</h1>
+
+        <div class="row">
+            {% for campaign in campaigns %}
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        {% if campaign.image %}
+                            <img src="{{ campaign.image.url }}" class="card-img-top" alt="{{ campaign.title }}">
+
+                        {% else %}
+                            <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="No image available">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ campaign.title }}</h5>
+                            <p class="card-text">{{ campaign.description|slice:":100" }}...</p>
+                            <p><strong>Goal Amount: </strong>{{ campaign.goal_amount }}</p>
+                            <p><strong>Current Amount: </strong>{{ campaign.current_amount }}</p>
+                            <a href="{% url 'campaign_detail' id=campaign.id %}" class="btn btn-primary">View Details</a>
+                            <a href="{% url 'donate' %}" class="btn btn-success">Donate</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

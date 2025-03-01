@@ -1,0 +1,37 @@
+{% load static %}
+{% include 'navbar.html' %}
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donate</title>
+    <link rel="icon" href="https://example.com/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>Donate to the Fundraising Campaign</h1>
+        <p>Your contributions will help in buying a harpic for cleaning the lavatory.</p>
+        <form method="post" action="{% url 'donate' %}">
+            <div class="form-group">
+                <label for="campaign">Select Campaign:</label>
+                <select class="form-control" id="campaign" name="campaign" required>
+                    {% for campaign in campaigns %}
+                        <option value="{{ campaign.id }}">{{ campaign.title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="amount">Donation Amount:</label>
+                <input type="number" class="form-control" id="amount" name="amount" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Donate</button>
+        </form>
+    </div>
+</body>
+</html>
