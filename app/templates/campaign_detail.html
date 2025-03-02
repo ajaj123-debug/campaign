@@ -1,4 +1,5 @@
 {% load static %}
+{% load math_filters %}
 <!DOCTYPE html>
 
 <html lang="en">
@@ -6,18 +7,383 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Campaign Detail</title>
-    <link rel="icon" href="https://example.com/favicon.ico" type="image/x-icon">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <style>
+        :root {
+            --primary: #00f2fe;
+            --secondary: #4facfe;
+            --dark: #0f172a;
+            --purple: rgba(88, 28, 135, 0.9);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+        }
 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: linear-gradient(135deg, var(--dark), var(--purple));
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .main-container {
+            margin-top: 120px;
+            padding: 0 20px;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .campaign-container {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 2rem;
+            animation: fadeInUp 0.6s ease backwards;
+            position: relative;
+        }
+
+        .campaign-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 24px;
+            padding: 2px;
+            background: linear-gradient(120deg, var(--primary), var(--secondary));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0.3;
+        }
+
+        .campaign-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 2rem;
+            background: linear-gradient(120deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .campaign-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .campaign-description {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+
+        .amount-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .amount-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .amount-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .amount-value {
+            color: var(--text-primary);
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(120deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .donate-btn {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            border: none;
+            border-radius: 12px;
+            position: relative;
+            z-index: 10;
+            color: var(--dark);
+            font-weight: 600;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+
+        .donate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 242, 254, 0.2);
+        }
+
+        .donate-btn i {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .donate-btn:hover i {
+            transform: translateX(4px);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .progress-container {
+            margin-bottom: 2rem;
+        }
+
+        .progress {
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 1s ease;
+        }
+
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .main-container {
+                margin-top: 100px;
+                padding: 0 15px;
+            }
+
+            .campaign-container {
+                padding: 1.5rem;
+            }
+
+            .campaign-title {
+                font-size: 2rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .campaign-image {
+                height: 250px;
+                margin-bottom: 1.5rem;
+            }
+
+            .amount-info {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .amount-card {
+                padding: 1.2rem;
+            }
+
+            .amount-value {
+                font-size: 1.75rem;
+            }
+
+            .campaign-description {
+                font-size: 1rem;
+                line-height: 1.6;
+            }
+
+            .progress-stats {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .donate-btn {
+                width: 100%;
+                justify-content: center;
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .campaign-title {
+                font-size: 1.75rem;
+            }
+
+            .campaign-image {
+                height: 200px;
+            }
+
+            .amount-value {
+                font-size: 1.5rem;
+            }
+
+            .campaign-container {
+                padding: 1rem;
+            }
+        }
+
+        /* Improve touch targets on mobile */
+        @media (hover: none) and (pointer: coarse) {
+            .donate-btn {
+                padding: 1.2rem;
+            }
+
+            .donate-btn i {
+                font-size: 1.4rem;
+            }
+
+            .amount-card {
+                cursor: default;
+                -webkit-tap-highlight-color: transparent;
+            }
+        }
+
+        /* Laptop specific adjustments */
+        @media (min-width: 1024px) and (max-width: 1366px) {
+            .main-container {
+                max-width: 900px;  /* Reduced from 1000px */
+                margin-top: 100px;  /* Reduced from 120px */
+            }
+
+            .campaign-container {
+                padding: 1.5rem;  /* Reduced from 2rem */
+            }
+
+            .campaign-title {
+                font-size: 2rem;  /* Reduced from 2.5rem */
+                margin-bottom: 1.5rem;
+            }
+
+            .campaign-image {
+                height: 300px;  /* Reduced from 400px */
+                margin-bottom: 1.5rem;
+            }
+
+            .amount-info {
+                gap: 1.5rem;  /* Reduced from 2rem */
+            }
+
+            .amount-card {
+                padding: 1.25rem;  /* Reduced from 1.5rem */
+            }
+
+            .amount-value {
+                font-size: 1.75rem;  /* Reduced from 2rem */
+            }
+
+            .campaign-description {
+                font-size: 1rem;  /* Reduced from 1.1rem */
+                margin-bottom: 1.5rem;
+            }
+
+            .donate-btn {
+                padding: 0.875rem 1.75rem;  /* Reduced from 1rem 2rem */
+                font-size: 1rem;  /* Reduced from 1.1rem */
+            }
+        }
+
+        /* Additional adjustments for even smaller laptops */
+        @media (min-width: 1024px) and (max-width: 1280px) {
+            .main-container {
+                max-width: 800px;
+            }
+
+            .campaign-image {
+                height: 250px;
+            }
+
+            .amount-info {
+                gap: 1rem;
+            }
+
+            .amount-card {
+                padding: 1rem;
+            }
+
+            .amount-value {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
     {% include 'navbar.html' %}
-    <div class="container mt-4">
-        <h1>{{ campaign.title }}</h1>
-        <p>{{ campaign.description }}</p>
-        <p>Goal Amount: {{ campaign.goal_amount }}</p>
-        <p>Current Amount: {{ campaign.current_amount }}</p>
-        <a href="{% url 'donate' %}" class="btn btn-primary">Donate</a>
+
+    <div class="main-container">
+        <div class="campaign-container">
+            {% if campaign.image %}
+                <img src="{{ campaign.image.url }}" class="campaign-image" alt="{{ campaign.title }}">
+            {% endif %}
+            
+            <h1 class="campaign-title">{{ campaign.title }}</h1>
+            
+            <div class="progress-container">
+                {% with percentage=campaign.current_amount|div:campaign.goal_amount|mul:100 %}
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" 
+                         style="width: {{ percentage }}%" 
+                         aria-valuenow="{{ percentage }}" 
+                         aria-valuemin="0" 
+                         aria-valuemax="100">
+                    </div>
+                </div>
+                <div class="progress-stats">
+                    <span>{{ percentage|floatformat:1 }}% Funded</span>
+                    <span>{{ campaign.goal_amount|sub:campaign.current_amount }} remaining</span>
+                </div>
+                {% endwith %}
+            </div>
+
+            <div class="amount-info">
+                <div class="amount-card">
+                    <div class="amount-label">Goal Amount</div>
+                    <div class="amount-value">{{ campaign.goal_amount }}</div>
+                </div>
+                <div class="amount-card">
+                    <div class="amount-label">Current Amount</div>
+                    <div class="amount-value">{{ campaign.current_amount }}</div>
+                </div>
+            </div>
+
+            <p class="campaign-description">{{ campaign.description }}</p>
+
+            <a href="{% url 'donate' %}?campaign={{ campaign.id }}" class="donate-btn">
+                <i class="fas fa-hand-holding-heart"></i>
+                Make a Donation
+            </a>
+        </div>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

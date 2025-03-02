@@ -1,37 +1,284 @@
 {% load static %}
-{% include 'navbar.html' %}
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Donate</title>
-    <link rel="icon" href="https://example.com/favicon.ico" type="image/x-icon">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <style>
+        :root {
+            --primary: #00f2fe;
+            --secondary: #4facfe;
+            --dark: #0f172a;
+            --purple: rgba(88, 28, 135, 0.9);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+        }
 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: linear-gradient(135deg, var(--dark), var(--purple));
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .main-container {
+            margin-top: 120px;
+            padding: 0 20px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 1rem;
+            background: linear-gradient(120deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--secondary), transparent);
+        }
+
+        .section-description {
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 1.1rem;
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 2rem;
+            animation: fadeInUp 0.6s ease backwards;
+            position: relative;
+        }
+
+        .form-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 24px;
+            padding: 2px;
+            background: linear-gradient(120deg, var(--primary), var(--secondary));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0.3;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .form-control {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 12px !important;
+            color: var(--text-primary) !important;
+            padding: 1rem !important;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.08) !important;
+            border-color: var(--secondary) !important;
+            box-shadow: 0 0 0 4px rgba(0, 242, 254, 0.1) !important;
+        }
+
+        select.form-control {
+            appearance: none;
+            background-image: linear-gradient(45deg, transparent 50%, var(--text-secondary) 50%),
+                            linear-gradient(135deg, var(--text-secondary) 50%, transparent 50%);
+            background-position: calc(100% - 20px) calc(1em + 10px),
+                               calc(100% - 15px) calc(1em + 10px);
+            background-size: 5px 5px,
+                           5px 5px;
+            background-repeat: no-repeat;
+        }
+
+        .donate-btn {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            border: none;
+            position: relative;
+            z-index: 10;
+            border-radius: 12px;
+            color: var(--dark);
+            font-weight: 600;
+            padding: 1rem 2rem;
+            width: 100%;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .donate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 242, 254, 0.2);
+        }
+
+        .donate-btn i {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .donate-btn:hover i {
+            transform: translateX(4px);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modern-form-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .modern-input {
+            width: 100%;
+            padding: 1.2rem 1rem 0.6rem;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .modern-input:focus {
+            border-color: var(--secondary);
+            background: rgba(255, 255, 255, 0.08);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(0, 242, 254, 0.1);
+        }
+
+        .modern-label {
+            position: absolute;
+            left: 1rem;
+            top: 1rem;
+            font-size: 1rem;
+            color: var(--text-secondary);
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        .modern-input:focus ~ .modern-label,
+        .modern-input:not(:placeholder-shown) ~ .modern-label {
+            transform: translateY(-0.5rem) scale(0.85);
+            color: var(--secondary);
+        }
+
+        select.modern-input {
+            appearance: none;
+            padding-right: 2.5rem;
+            cursor: pointer;
+            background-image: linear-gradient(45deg, transparent 50%, var(--text-secondary) 50%),
+                            linear-gradient(135deg, var(--text-secondary) 50%, transparent 50%);
+            background-position: calc(100% - 20px) calc(1.2em + 2px),
+                               calc(100% - 15px) calc(1.2em + 2px);
+            background-size: 5px 5px,
+                           5px 5px;
+            background-repeat: no-repeat;
+        }
+
+        select.modern-input:focus ~ .modern-label,
+        select.modern-input:not([value=""]) ~ .modern-label {
+            transform: translateY(-0.5rem) scale(0.85);
+            color: var(--secondary);
+        }
+
+        select.modern-input option {
+            background: var(--dark);
+            color: var(--text-primary);
+            padding: 0.5rem;
+        }
+    </style>
 </head>
 <body>
-    <div class="container mt-4">
-        <h1>Donate to the Fundraising Campaign</h1>
-        <p>Your contributions will help in buying a harpic for cleaning the lavatory.</p>
-        <form method="post" action="{% url 'donate' %}">
-            <div class="form-group">
-                <label for="campaign">Select Campaign:</label>
-                <select class="form-control" id="campaign" name="campaign" required>
-                    {% for campaign in campaigns %}
-                        <option value="{{ campaign.id }}">{{ campaign.title }}</option>
-                    {% endfor %}
-                </select>
-            </div>
+    {% include 'navbar.html' %}
 
-            {% csrf_token %}
-            <div class="form-group">
-                <label for="amount">Donation Amount:</label>
-                <input type="number" class="form-control" id="amount" name="amount" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Donate</button>
-        </form>
+    <div class="main-container">
+        <h1 class="section-title">Make a Donation</h1>
+        <p class="section-description">Your contributions will help make a difference.</p>
+        
+        <div class="form-container">
+            <form method="post" action="{% url 'donate' %}">
+                {% csrf_token %}
+                <div class="modern-form-group">
+                    <select class="modern-input" id="campaign" name="campaign" required>
+                        <option value="" disabled selected hidden></option>
+                        {% for campaign in campaigns %}
+                            <option value="{{ campaign.id }}" 
+                                    {% if selected_campaign == campaign.id|stringformat:"s" %}selected{% endif %}>
+                                {{ campaign.title }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <label class="modern-label" for="campaign">Select Campaign</label>
+                </div>
+
+                <div class="modern-form-group">
+                    <input type="number" 
+                           class="modern-input" 
+                           id="amount" 
+                           name="amount" 
+                           placeholder=" "
+                           required>
+                    <label class="modern-label" for="amount">Donation Amount</label>
+                </div>
+
+                <button type="submit" class="donate-btn">
+                    <i class="fas fa-hand-holding-heart"></i>
+                    Make Donation
+                </button>
+            </form>
+        </div>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
